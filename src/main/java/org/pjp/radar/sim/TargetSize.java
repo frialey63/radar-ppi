@@ -1,4 +1,4 @@
-package org.pjp.radar.db;
+package org.pjp.radar.sim;
 
 public enum TargetSize {
 

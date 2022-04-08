@@ -10,9 +10,10 @@ import java.util.concurrent.ThreadFactory;
 import org.pjp.radar.Radar;
 import org.pjp.radar.db.Plot;
 import org.pjp.radar.db.PlotDatabase;
+import org.pjp.radar.db.PlotExtractor;
+import org.pjp.radar.sim.TargetSimulator;
 import org.pjp.radar.util.Constants;
 import org.pjp.radar.util.MathUtils;
-import org.williams.st.Utils;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -32,6 +33,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class RadarPPI extends Application {
+
+    static {
+        TargetSimulator.simulate();
+
+        PlotExtractor.extract();
+    }
 
     private static final class PlotPoint2D {
         final int targetSize;
@@ -308,7 +315,7 @@ public class RadarPPI extends Application {
 
         private void drawPlot(GraphicsContext gc, double xc, double yc, double theta, List<PlotPoint2D> plots) {
             double radarRange = Constants.NM_TO_M * radar.getInstrumentedRange();
-            double radarSector = Utils.toRad(radar.getBeamwidth());
+            double radarSector = Math.toRadians(radar.getBeamwidth());
 
             gc.setFill(GREENISH);
 

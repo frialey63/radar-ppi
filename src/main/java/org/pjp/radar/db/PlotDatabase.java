@@ -1,7 +1,10 @@
 package org.pjp.radar.db;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlotDatabase {
 
@@ -11,14 +14,25 @@ public final class PlotDatabase {
         return instance;
     }
 
-    private final List<Plot> plots = new ArrayList<>();
+    private final Map<String, Plot> plots = new ConcurrentHashMap<>();
 
     {
-        plots.add(new Plot(50114.66590698046, 0.6064153449524564, TargetSize.MEDIUM));
+//        String id = UUID.randomUUID().toString();
+//        plots.put(id, new Plot(id, 50114.66590698046, 0.6064153449524564, TargetSize.MEDIUM));
     }
 
     public List<Plot> getPlots() {
-        return plots;
+        return Collections.unmodifiableList(new ArrayList<Plot>(plots.values()));
+    }
+
+    public void updatePlot(Plot plot) {
+        String id = plot.getId();
+
+        if (plots.containsKey(id) ) {
+            plots.replace(id, plot);
+        } else {
+            plots.put(id, plot);
+        }
     }
 
 }
