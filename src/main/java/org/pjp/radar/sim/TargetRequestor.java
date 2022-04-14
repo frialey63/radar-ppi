@@ -36,8 +36,6 @@ public class TargetRequestor implements Runnable {
 
         Aircraft[] allAircraft = client.getAllAircraft();
 
-        System.out.println("allAircraft.length = " + allAircraft.length);
-
         for (Aircraft aircraft : allAircraft) {
             targetDatabase.updateTarget(new Target(aircraft.getIcaoAddress(), aircraft.getLatitude(), aircraft.getLongitude(), TargetSize.MEDIUM));
         }
