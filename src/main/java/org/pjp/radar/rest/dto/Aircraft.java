@@ -1,4 +1,4 @@
-package org.pjp.radar.rest;
+package org.pjp.radar.rest.dto;
 
 public class Aircraft {
 

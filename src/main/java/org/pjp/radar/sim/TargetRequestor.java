@@ -1,13 +1,12 @@
-package org.pjp.radar.rest;
+package org.pjp.radar.sim;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import org.pjp.radar.sim.Target;
-import org.pjp.radar.sim.TargetDatabase;
-import org.pjp.radar.sim.TargetSize;
+import org.pjp.radar.rest.RestClient;
+import org.pjp.radar.rest.dto.Aircraft;
 
 
 public class TargetRequestor implements Runnable {

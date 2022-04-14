@@ -1,5 +1,7 @@
 package org.pjp.radar.rest;
 
+import org.pjp.radar.rest.dto.Aircraft;
+
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
