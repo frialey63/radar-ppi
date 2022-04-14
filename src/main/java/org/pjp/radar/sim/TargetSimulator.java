@@ -30,6 +30,8 @@ public class TargetSimulator implements Runnable {
             }
         });
         executorService.scheduleAtFixedRate(targetSimulator, INITIAL_DELAY, PERIOD, TimeUnit.SECONDS);
+
+        TargetDatabase.getInstance().generateTargets();
     }
 
     @Override
@@ -37,7 +39,6 @@ public class TargetSimulator implements Runnable {
         TargetDatabase targetDatabase = TargetDatabase.getInstance();
 
         for (Target target : targetDatabase.getTargets()) {
-
             Point point = new Point(toRad(target.getLat()), toRad(target.getLon()));
 
             RhumbLine rhumbLine = new RhumbLine(point, null);

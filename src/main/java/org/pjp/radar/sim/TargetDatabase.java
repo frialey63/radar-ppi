@@ -16,7 +16,7 @@ public final class TargetDatabase {
 
     private final Map<String, Target> targets = new ConcurrentHashMap<>();
 
-    {
+    public void generateTargets() {
         String id;
 
         id = "KLM59M";
@@ -37,6 +37,12 @@ public final class TargetDatabase {
     }
 
     public void updateTarget(Target target) {
-        targets.replace(target.getId(), target);
+        String id = target.getId();
+
+        if (targets.containsKey(id) ) {
+            targets.replace(id, target);
+        } else {
+            targets.put(id, target);
+        }
     }
 }

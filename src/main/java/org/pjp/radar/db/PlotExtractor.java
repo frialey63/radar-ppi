@@ -31,7 +31,7 @@ public class PlotExtractor implements Runnable {
         executorService.scheduleAtFixedRate(plotExtractor, INITIAL_DELAY, PERIOD, TimeUnit.MILLISECONDS);
     }
 
-    private static final FEPoint RADAR_POINT = new FEPoint(toRad(51.38287), -toRad(1.33574));
+    private static final FEPoint RADAR_POINT = new FEPoint(toRad(51.38287), toRad(1.33574));
 
     @Override
     public void run() {
@@ -40,7 +40,7 @@ public class PlotExtractor implements Runnable {
         PlotDatabase plotDatabase = PlotDatabase.getInstance();
 
         for (Target target : TargetDatabase.getInstance().getTargets()) {
-            FEPoint targetPoint = new FEPoint(toRad(target.getLat()), -toRad(target.getLon()));
+            FEPoint targetPoint = new FEPoint(toRad(target.getLat()), toRad(target.getLon()));
 
             double range = flatEarth.distance(targetPoint);
             double bearing = flatEarth.bearing(targetPoint);

@@ -11,7 +11,7 @@ import org.pjp.radar.Radar;
 import org.pjp.radar.db.Plot;
 import org.pjp.radar.db.PlotDatabase;
 import org.pjp.radar.db.PlotExtractor;
-import org.pjp.radar.sim.TargetSimulator;
+import org.pjp.radar.rest.TargetRequestor;
 import org.pjp.radar.util.Constants;
 import org.pjp.radar.util.MathUtils;
 
@@ -35,7 +35,7 @@ import javafx.stage.Stage;
 public class RadarPPI extends Application {
 
     static {
-        TargetSimulator.simulate();
+        TargetRequestor.request();
 
         PlotExtractor.extract();
     }

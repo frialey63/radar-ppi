@@ -24,6 +24,10 @@ public class Target {
         this.speed = speed;
     }
 
+    public Target(String id, double lat, double lon, TargetSize targetSize) {
+        this(id, lat, lon, targetSize, 0.0, 0.0);
+    }
+
     public String getId() {
         return id;
     }
