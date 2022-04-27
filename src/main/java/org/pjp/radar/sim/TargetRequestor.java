@@ -15,6 +15,8 @@ public class TargetRequestor implements Runnable {
 
     private static final int PERIOD = 1;
 
+    private static final long STALE_MILLIS = 2 * 60 * 1000;
+
     public static void request() {
         Runnable targetRequestor = new TargetRequestor();
 
@@ -34,11 +36,13 @@ public class TargetRequestor implements Runnable {
     public void run() {
         TargetDatabase targetDatabase = TargetDatabase.getInstance();
 
-        Aircraft[] allAircraft = client.getAllAircraft();
-
-        for (Aircraft aircraft : allAircraft) {
-            targetDatabase.updateTarget(new Target(aircraft.getIcaoAddress(), aircraft.getLatitude(), aircraft.getLongitude(), TargetSize.MEDIUM));
+        for (Aircraft aircraft : client.getAllAircraft()) {
+            targetDatabase.updateTarget(new Target(aircraft.getIcaoAddress(), aircraft.getLatitude(), aircraft.getLongitude(), TargetSize.MEDIUM, aircraft.getTov()));
         }
+
+        long tov = System.currentTimeMillis() - STALE_MILLIS;
+
+        targetDatabase.getTargets().stream().filter(t -> t.getTov() < tov).forEach(targetDatabase::removeTarget);
     }
 
 }

@@ -10,22 +10,25 @@ public class Target {
 
     private TargetSize targetSize;
 
+    private long tov;			// millis
+
     private double course;		// degrees
 
     private double speed;		// knots
 
-    public Target(String id, double lat, double lon, TargetSize targetSize, double course, double speed) {
+    public Target(String id, double lat, double lon, TargetSize targetSize, long tov, double course, double speed) {
         super();
         this.id = id;
         this.lat = lat;
         this.lon = lon;
         this.targetSize = targetSize;
+        this.tov = tov;
         this.course = course;
         this.speed = speed;
     }
 
-    public Target(String id, double lat, double lon, TargetSize targetSize) {
-        this(id, lat, lon, targetSize, 0.0, 0.0);
+    public Target(String id, double lat, double lon, TargetSize targetSize, long tov) {
+        this(id, lat, lon, targetSize, tov, 0.0, 0.0);
     }
 
     public String getId() {
@@ -56,6 +59,14 @@ public class Target {
         this.targetSize = targetSize;
     }
 
+    public long getTov() {
+        return tov;
+    }
+
+    public void setTov(long tov) {
+        this.tov = tov;
+    }
+
     public double getCourse() {
         return course;
     }
@@ -74,7 +85,7 @@ public class Target {
 
     @Override
     public String toString() {
-        return "Target [id=" + id + ", lat=" + lat + ", lon=" + lon + ", targetSize=" + targetSize + ", course=" + course + ", speed=" + speed + "]";
+        return "Target [id=" + id + ", lat=" + lat + ", lon=" + lon + ", targetSize=" + targetSize + ", tov=" + tov + ", course=" + course + ", speed=" + speed + "]";
     }
 
 }

@@ -12,6 +12,7 @@ import org.pjp.radar.db.Plot;
 import org.pjp.radar.db.PlotDatabase;
 import org.pjp.radar.db.PlotExtractor;
 import org.pjp.radar.sim.TargetRequestor;
+import org.pjp.radar.sim.TargetSimulator;
 import org.pjp.radar.util.Constants;
 import org.pjp.radar.util.MathUtils;
 
@@ -20,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -30,13 +32,12 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class RadarPPI extends Application {
 
     static {
-        TargetRequestor.request();
-
         PlotExtractor.extract();
     }
 
@@ -75,6 +76,10 @@ public class RadarPPI extends Application {
     private static int halfWidth = width / 2;
     private static int radius = halfWidth;
 
+    private static int rrIndex = 0;
+
+    private static int annotate = 3;
+
     private ChangeListener<? super Number> widthChangeListener;
     private ChangeListener<? super Number> heightChangeListener;
 
@@ -111,6 +116,36 @@ public class RadarPPI extends Application {
         Scene scene = new Scene(root);
         scene.widthProperty().addListener(listener);
         scene.heightProperty().addListener(listener);
+        scene.setOnKeyTyped(key -> {
+            switch (key.getCharacter()) {
+            case "a" :
+                annotate = (annotate + 1) % 4;
+                break;
+
+            case "1" :
+                rrIndex = 0;
+                break;
+
+            case "2" :
+                rrIndex = 1;
+                break;
+
+            case "3" :
+                rrIndex = 2;
+                break;
+
+            case "4" :
+                rrIndex = 3;
+                break;
+
+            case "5" :
+                rrIndex = 4;
+                break;
+
+            default:
+                break;
+            }
+        });
 
         stage.setTitle("Radar PPI");
         stage.setScene(scene);
@@ -151,13 +186,15 @@ public class RadarPPI extends Application {
 
     private static class CanvasTask extends Task<Canvas> {
 
-        private final Radar radar = new Radar("ASR 9", "Northrop Grumman", "AN/GPN-27", 2_800_000_000L, 325, 0.000_001, 1_300_000, 60, 450, 1.4, 12.5);
+        private final Radar radar = Radar.RADAR;
 
         private final double radsPerPulse = radar.getRadsPerPulse();
 
         private final long sleep = sleepForDelta(radar.getSecsPerScan(), radsPerPulse);
 
         private double theta = 0;
+
+        private int saveRrIndex = -1;
 
         @Override
         protected Canvas call() throws Exception {
@@ -177,11 +214,20 @@ public class RadarPPI extends Application {
                 double x = xc + r * Math.sin(theta);
                 double y = yc - r * Math.cos(theta);
 
-                drawPlot(gc, xc, yc, theta, plots);
+                if (saveRrIndex != rrIndex) {
+                    scans.clear();
+                    plots.clear();
+
+                    saveRrIndex = rrIndex;
+                }
+
+                RangeRings rangeRings = RangeRings.RANGE_RINGS[rrIndex];
+
+                drawPlot(gc, rangeRings.maxRange, xc, yc, theta, plots);
                 drawPlotPersistence(gc, xc, yc, plots);
                 drawScan(gc, xc, yc, x, y, scans);
                 drawScanPersistence(gc, xc, yc, scans);
-                drawReticle(gc, radar.getInstrumentedRange(), 5, true);
+                drawReticle(gc, rangeRings, annotate);
 
                 theta = MathUtils.mod(theta + radsPerPulse, FULL_CIRCLE);
 
@@ -193,15 +239,15 @@ public class RadarPPI extends Application {
             return null;
         }
 
-        private void drawReticle(GraphicsContext gc, int maxRange, int numRings, boolean annotate) {
+        private void drawReticle(GraphicsContext gc, RangeRings rangeRings, int annotate) {
             gc.setStroke(Color.LIGHTSLATEGRAY);
 
             // draw range rings
 
             double r = radius;
-            double rStep = radius / numRings;
+            double rStep = radius / rangeRings.numRings;
 
-            for (int i = 0; i < numRings; i++) {
+            for (int i = 0; i < rangeRings.numRings; i++) {
                 double x = width - radius - r;
                 double y = width - radius - r;
                 double width = 2 * r;
@@ -235,31 +281,78 @@ public class RadarPPI extends Application {
             x2 = halfWidth + radius * cos45;
             y2 = halfWidth + radius * sin45;
 
+            gc.setLineDashes(5);
             gc.strokeLine(x1, y1, x2, y2);
+            gc.setLineDashes(null);
 
             x1 = halfWidth - radius * cos45;
             y1 = halfWidth + radius * sin45;
             x2 = halfWidth + radius * cos45;
             y2 = halfWidth - radius * sin45;
 
+            gc.setLineDashes(5);
             gc.strokeLine(x1, y1, x2, y2);
+            gc.setLineDashes(null);
 
             // draw annotations
 
-            if (annotate) {
+            if (annotate > 0) {
                 gc.setFont(FONT);
 
-                double x = halfWidth;
-                double y = halfWidth - rStep;
+                double x;
+                double y;
 
-                double rangeStep = maxRange / numRings;
-                double range = rangeStep;
+                // range rings
 
-                for (int i = 1; i < numRings; i++) {
-                    gc.strokeText(String.format("%2.0f nm", range), x + TEXT_OFFSET, y - TEXT_OFFSET);
+                if (annotate == 2 || annotate == 3) {
+                    x = halfWidth;
+                    y = halfWidth - rStep;
 
-                    y -= rStep;
-                    range += rangeStep;
+                    double rangeStep = rangeRings.rangeStep();
+                    double ringRange = rangeStep;
+
+                    gc.setTextAlign(TextAlignment.RIGHT);
+                    gc.setTextBaseline(VPos.BASELINE);
+
+                    for (int i = 1; i < rangeRings.numRings; i++) {
+                        gc.strokeText(String.format("%2.0f nm", ringRange), x - TEXT_OFFSET, y - TEXT_OFFSET);
+
+                        y -= rStep;
+                        ringRange += rangeStep;
+                    }
+                }
+
+
+                // bearings
+
+                if (annotate == 1 || annotate == 3) {
+                    x = halfWidth;
+                    y = 0;
+
+                    gc.setTextAlign(TextAlignment.LEFT);
+                    gc.setTextBaseline(VPos.TOP);
+                    gc.strokeText(String.format("%1d°", 0), x + TEXT_OFFSET, y + TEXT_OFFSET);
+
+                    x = width;
+                    y = halfWidth;
+
+                    gc.setTextAlign(TextAlignment.RIGHT);
+                    gc.setTextBaseline(VPos.TOP);
+                    gc.strokeText(String.format("%1d°", 90), x - TEXT_OFFSET, y + TEXT_OFFSET);
+
+                    x = halfWidth;
+                    y = width;
+
+                    gc.setTextAlign(TextAlignment.RIGHT);
+                    gc.setTextBaseline(VPos.BOTTOM);
+                    gc.strokeText(String.format("%1d°", 180), x - TEXT_OFFSET, y - TEXT_OFFSET);
+
+                    x = 0;
+                    y = halfWidth;
+
+                    gc.setTextAlign(TextAlignment.LEFT);
+                    gc.setTextBaseline(VPos.BOTTOM);
+                    gc.strokeText(String.format("%1d°", 270), x + TEXT_OFFSET, y - TEXT_OFFSET);
                 }
             }
         }
@@ -313,8 +406,8 @@ public class RadarPPI extends Application {
             }
         }
 
-        private void drawPlot(GraphicsContext gc, double xc, double yc, double theta, List<PlotPoint2D> plots) {
-            double radarRange = Constants.NM_TO_M * radar.getInstrumentedRange();
+        private void drawPlot(GraphicsContext gc, int range, double xc, double yc, double theta, List<PlotPoint2D> plots) {
+            double radarRange = Constants.NM_TO_M * range;
             double radarSector = Math.toRadians(radar.getBeamwidth());
 
             gc.setFill(GREENISH);
@@ -352,6 +445,12 @@ public class RadarPPI extends Application {
     }
 
     public static void main(String[] args) {
+        if ((args.length == 1) && "simulate".equals(args[0])) {
+            TargetSimulator.simulate();
+        } else {
+            TargetRequestor.request();
+        }
+
         launch(args);
     }
 

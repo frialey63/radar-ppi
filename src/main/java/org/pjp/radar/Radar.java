@@ -2,6 +2,8 @@ package org.pjp.radar;
 
 public final class Radar {
 
+    public static final Radar RADAR = new Radar("ASR 9", "Northrop Grumman", "AN/GPN-27", 2_800_000_000L, 325, 0.000_001, 1_300_000, 60, 450, 1.4, 12.5);
+
     private final String name;
 
     private final String manufacturer;

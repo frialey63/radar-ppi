@@ -8,15 +8,18 @@ public class Aircraft {
 
     private double longitude;
 
+    private long tov;
+
     public Aircraft() {
         super();
     }
 
-    public Aircraft(String icaoAddress, double latitude, double longitude) {
+    public Aircraft(String icaoAddress, double latitude, double longitude, long tov) {
         super();
         this.icaoAddress = icaoAddress;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.tov = tov;
     }
 
     public String getIcaoAddress() {
@@ -43,10 +46,17 @@ public class Aircraft {
         this.longitude = longitude;
     }
 
-    @Override
-    public String toString() {
-        return "Aircraft [icaoAddress=" + icaoAddress + ", latitude=" + latitude + ", longitude=" + longitude + "]";
+    public long getTov() {
+        return tov;
     }
 
+    public void setTov(long tov) {
+        this.tov = tov;
+    }
+
+    @Override
+    public String toString() {
+        return "Aircraft [icaoAddress=" + icaoAddress + ", latitude=" + latitude + ", longitude=" + longitude + ", tov=" + tov + "]";
+    }
 
 }

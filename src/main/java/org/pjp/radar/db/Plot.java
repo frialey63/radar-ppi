@@ -4,7 +4,7 @@ import org.pjp.radar.sim.TargetSize;
 
 public final class Plot {
 
-    private final String id;
+    private final String id;		// TODO maybe remove plot ID
 
     private final double range;		// metre
 

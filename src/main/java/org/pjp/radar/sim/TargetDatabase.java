@@ -17,19 +17,20 @@ public final class TargetDatabase {
     private final Map<String, Target> targets = new ConcurrentHashMap<>();
 
     public void generateTargets() {
+        long tov = System.currentTimeMillis();
         String id;
 
         id = "KLM59M";
-        targets.put(id, new Target(id, 51.581, 1.316, TargetSize.MEDIUM, 263, 309));
+        targets.put(id, new Target(id, 51.581, 1.316, TargetSize.MEDIUM, tov, 263, 309));
 
         id = "EXS58RH";
-        targets.put(id, new Target(id, 51.316, 1.633, TargetSize.MEDIUM, 109, 467));
+        targets.put(id, new Target(id, 51.316, 1.633, TargetSize.MEDIUM, tov, 109, 467));
 
         id = "RYR27YY";
-        targets.put(id, new Target(id, 50.614, 1.220, TargetSize.MEDIUM, 314, 400));
+        targets.put(id, new Target(id, 50.614, 1.220, TargetSize.MEDIUM, tov, 314, 400));
 
         id = "BEL7EK";
-        targets.put(id, new Target(id, 51.515, 2.191, TargetSize.MEDIUM, 283, 379));
+        targets.put(id, new Target(id, 51.515, 2.191, TargetSize.MEDIUM, tov, 283, 379));
     }
 
     public List<Target> getTargets() {
@@ -44,5 +45,9 @@ public final class TargetDatabase {
         } else {
             targets.put(id, target);
         }
+    }
+
+    public void removeTarget(Target target) {
+        targets.remove(target.getId());
     }
 }

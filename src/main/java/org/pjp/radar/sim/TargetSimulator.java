@@ -38,6 +38,8 @@ public class TargetSimulator implements Runnable {
     public void run() {
         TargetDatabase targetDatabase = TargetDatabase.getInstance();
 
+        long tov = System.currentTimeMillis();
+
         for (Target target : targetDatabase.getTargets()) {
             Point point = new Point(toRad(target.getLat()), toRad(target.getLon()));
 
@@ -50,6 +52,7 @@ public class TargetSimulator implements Runnable {
 
             target.setLat(toDeg(newPoint.lat));
             target.setLon(toDeg(newPoint.lon));
+            target.setTov(tov);
 
             targetDatabase.updateTarget(target);
         }

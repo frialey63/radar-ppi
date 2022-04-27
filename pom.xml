@@ -52,6 +52,9 @@
                 <version>0.0.3</version>
                 <configuration>
                     <mainClass>org.pjp.radar.ppi.RadarPPI</mainClass>
+                    <commandlineArgs>
+                        simulate
+                    </commandlineArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -66,9 +69,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>
-                                    org.pjp.radar.ppi.RadarPPI
-                                </mainClass>
+                                    <mainClass>org.pjp.radar.ppi.RadarPPI</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

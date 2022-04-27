@@ -7,8 +7,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.pjp.radar.Radar;
 import org.pjp.radar.sim.Target;
 import org.pjp.radar.sim.TargetDatabase;
+import org.pjp.radar.util.Constants;
 import org.williams.st.FEPoint;
 import org.williams.st.FlatEarth;
 
@@ -36,8 +38,11 @@ public class PlotExtractor implements Runnable {
     @Override
     public void run() {
         FlatEarth flatEarth = new FlatEarth(RADAR_POINT);
+        double radarRange = Constants.NM_TO_M * Radar.RADAR.getInstrumentedRange();
 
         PlotDatabase plotDatabase = PlotDatabase.getInstance();
+
+        plotDatabase.clearPlots();
 
         for (Target target : TargetDatabase.getInstance().getTargets()) {
             FEPoint targetPoint = new FEPoint(toRad(target.getLat()), toRad(target.getLon()));
@@ -45,8 +50,10 @@ public class PlotExtractor implements Runnable {
             double range = flatEarth.distance(targetPoint);
             double bearing = flatEarth.bearing(targetPoint);
 
-            Plot plot = new Plot(target.getId(), range, bearing, target.getTargetSize());
-            plotDatabase.updatePlot(plot);
+            if (range <= radarRange) {
+                Plot plot = new Plot(target.getId(), range, bearing, target.getTargetSize());
+                plotDatabase.storePlot(plot);
+            }
         }
     }
 }
