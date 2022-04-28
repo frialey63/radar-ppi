@@ -77,8 +77,9 @@ public class RadarPPI extends Application {
     private static int radius = halfWidth;
 
     private static int rrIndex = 0;
-
     private static int annotate = 3;
+
+    private static volatile boolean running = true;
 
     private ChangeListener<? super Number> widthChangeListener;
     private ChangeListener<? super Number> heightChangeListener;
@@ -120,6 +121,10 @@ public class RadarPPI extends Application {
             switch (key.getCharacter()) {
             case "a" :
                 annotate = (annotate + 1) % 4;
+                break;
+
+            case "x" :
+                running = false;
                 break;
 
             case "1" :
@@ -198,13 +203,13 @@ public class RadarPPI extends Application {
 
         @Override
         protected Canvas call() throws Exception {
+            Canvas canvas = null;
+
             List<Point2D> scans = new ArrayList<>();
             List<PlotPoint2D> plots = new ArrayList<>();
 
-            boolean running = true;
-
             while (running) {
-                Canvas canvas = new Canvas(width, width);
+                canvas = new Canvas(width, width);
                 GraphicsContext gc = canvas.getGraphicsContext2D();
 
                 double r = radius;
@@ -236,7 +241,7 @@ public class RadarPPI extends Application {
                 Thread.sleep(sleep);
             }
 
-            return null;
+            return canvas;
         }
 
         private void drawReticle(GraphicsContext gc, RangeRings rangeRings, int annotate) {
