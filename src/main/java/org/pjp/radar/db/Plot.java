@@ -1,7 +1,5 @@
 package org.pjp.radar.db;
 
-import org.pjp.radar.sim.TargetSize;
-
 public final class Plot {
 
     private final String id;		// TODO maybe remove plot ID
@@ -10,14 +8,14 @@ public final class Plot {
 
     private final double bearing;	// radian
 
-    private final TargetSize targetSize;
+    private final double size;
 
-    public Plot(String id, double range, double bearing, TargetSize targetSize) {
+    public Plot(String id, double range, double bearing, double size) {
         super();
         this.id = id;
         this.range = range;
         this.bearing = bearing;
-        this.targetSize = targetSize;
+        this.size = size;
     }
 
     public String getId() {
@@ -32,13 +30,13 @@ public final class Plot {
         return bearing;
     }
 
-    public TargetSize getTargetSize() {
-        return targetSize;
+    public double getSize() {
+        return size;
     }
 
     @Override
     public String toString() {
-        return "Plot [id=" + id + ", range=" + range + ", bearing=" + bearing + ", targetSize=" + targetSize + "]";
+        return "Plot [id=" + id + ", range=" + range + ", bearing=" + bearing + ", size=" + size + "]";
     }
 
 }

@@ -42,15 +42,15 @@ public class RadarPPI extends Application {
     }
 
     private static final class PlotPoint2D {
-        final int targetSize;
+        final double size;
 
         final Point2D point;
 
         int decay;
 
-        public PlotPoint2D(int targetSize, Point2D point, int decay) {
+        public PlotPoint2D(double size, Point2D point, int decay) {
             super();
-            this.targetSize = targetSize;
+            this.size = size;
             this.point = point;
             this.decay = decay;
         }
@@ -389,8 +389,8 @@ public class RadarPPI extends Application {
             for (Iterator<PlotPoint2D> iterator = plots.iterator(); iterator.hasNext();) {
                 PlotPoint2D plotPoint2D = iterator.next();
 
-                double w = plotPoint2D.targetSize;
-                double h = plotPoint2D.targetSize;
+                double w = plotPoint2D.size;
+                double h = plotPoint2D.size;
 
                 double alpha = plotPoint2D.decay * alphaStep;
                 Color color = new Color(0, GREEN, 0, alpha);
@@ -423,17 +423,17 @@ public class RadarPPI extends Application {
                         double x = xc + r * Math.sin(theta);
                         double y = yc - r * Math.cos(theta);
 
-                        int targetSize = plot.getTargetSize().getPixels();
+                        double size = plot.getSize();
 
-                        double w = targetSize;
-                        double h = targetSize;
+                        double w = size;
+                        double h = size;
 
                         double xb = x - w / 2.0;
                         double yb = y - h / 2.0;
 
                         gc.fillOval(xb, yb, w, h);
 
-                        plots.add(new PlotPoint2D(targetSize, new Point2D(x, y), radar.getPulsesPerScan()));
+                        plots.add(new PlotPoint2D(size, new Point2D(x, y), radar.getPulsesPerScan()));
                     }
                 }
             }

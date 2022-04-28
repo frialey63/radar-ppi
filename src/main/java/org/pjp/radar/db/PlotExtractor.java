@@ -51,7 +51,7 @@ public class PlotExtractor implements Runnable {
             double bearing = flatEarth.bearing(targetPoint);
 
             if (range <= radarRange) {
-                Plot plot = new Plot(target.getId(), range, bearing, target.getTargetSize());
+                Plot plot = new Plot(target.getId(), range, bearing, target.getSize());
                 plotDatabase.storePlot(plot);
             }
         }

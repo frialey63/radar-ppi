@@ -1,5 +1,7 @@
 package org.pjp.radar.sim;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+
 public class Target {
 
     private final String id;
@@ -8,23 +10,24 @@ public class Target {
 
     private double lon;		// degrees
 
-    private TargetSize targetSize;
-
     private long tov;			// millis
 
     private double course;		// degrees
 
     private double speed;		// knots
 
+    private NormalDistribution f;
+
     public Target(String id, double lat, double lon, TargetSize targetSize, long tov, double course, double speed) {
         super();
         this.id = id;
         this.lat = lat;
         this.lon = lon;
-        this.targetSize = targetSize;
         this.tov = tov;
         this.course = course;
         this.speed = speed;
+
+        f = new NormalDistribution(targetSize.getMean(), targetSize.getStandardDeviation());
     }
 
     public Target(String id, double lat, double lon, TargetSize targetSize, long tov) {
@@ -51,12 +54,8 @@ public class Target {
         this.lon = lon;
     }
 
-    public TargetSize getTargetSize() {
-        return targetSize;
-    }
-
-    public void setTargetSize(TargetSize targetSize) {
-        this.targetSize = targetSize;
+    public double getSize() {
+        return f.sample();
     }
 
     public long getTov() {
@@ -85,7 +84,7 @@ public class Target {
 
     @Override
     public String toString() {
-        return "Target [id=" + id + ", lat=" + lat + ", lon=" + lon + ", targetSize=" + targetSize + ", tov=" + tov + ", course=" + course + ", speed=" + speed + "]";
+        return "Target [id=" + id + ", lat=" + lat + ", lon=" + lon + ", size=" + f.getMean() + ", tov=" + tov + ", course=" + course + ", speed=" + speed + "]";
     }
 
 }
