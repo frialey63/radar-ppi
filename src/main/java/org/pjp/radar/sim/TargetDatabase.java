@@ -40,7 +40,7 @@ public final class TargetDatabase {
     public void updateTarget(Target target) {
         String id = target.getId();
 
-        if (targets.containsKey(id) ) {
+        if (targets.containsKey(id)) {
             targets.replace(id, target);
         } else {
             targets.put(id, target);
@@ -49,5 +49,13 @@ public final class TargetDatabase {
 
     public void removeTarget(Target target) {
         targets.remove(target.getId());
+    }
+
+    public boolean isTargetPresent(String id) {
+        return targets.containsKey(id);
+    }
+
+    public Target getTarget(String id) {
+        return targets.get(id);
     }
 }

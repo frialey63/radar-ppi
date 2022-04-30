@@ -37,7 +37,23 @@ public class TargetRequestor implements Runnable {
         TargetDatabase targetDatabase = TargetDatabase.getInstance();
 
         for (Aircraft aircraft : client.getAllAircraft()) {
-            targetDatabase.updateTarget(new Target(aircraft.getIcaoAddress(), aircraft.getLatitude(), aircraft.getLongitude(), TargetSize.MEDIUM, aircraft.getTov()));
+            String icaoAddress = aircraft.getIcaoAddress();
+            TargetSize targetSize;
+
+            if (targetDatabase.isTargetPresent(icaoAddress)) {
+                targetSize = targetDatabase.getTarget(icaoAddress).getTargetSize();
+            } else {
+                String category = client.getCategoryByIcao24(icaoAddress.toLowerCase());
+
+                if ("null".equals(category)) {
+                    targetSize = TargetSize.MEDIUM;
+                } else {
+                    category = category.substring(1, category.length() - 1);
+                    targetSize = TargetSize.valueOf(category);
+                }
+            }
+
+            targetDatabase.updateTarget(new Target(aircraft.getIcaoAddress(), aircraft.getLatitude(), aircraft.getLongitude(), targetSize, aircraft.getTov()));
         }
 
         long tov = System.currentTimeMillis() - STALE_MILLIS;

@@ -10,6 +10,8 @@ public class Target {
 
     private double lon;		// degrees
 
+    private TargetSize targetSize;
+
     private long tov;			// millis
 
     private double course;		// degrees
@@ -23,6 +25,7 @@ public class Target {
         this.id = id;
         this.lat = lat;
         this.lon = lon;
+        this.targetSize = targetSize;
         this.tov = tov;
         this.course = course;
         this.speed = speed;
@@ -52,6 +55,14 @@ public class Target {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public TargetSize getTargetSize() {
+        return targetSize;
+    }
+
+    public void setTargetSize(TargetSize targetSize) {
+        this.targetSize = targetSize;
     }
 
     public double getSize() {
@@ -84,7 +95,23 @@ public class Target {
 
     @Override
     public String toString() {
-        return "Target [id=" + id + ", lat=" + lat + ", lon=" + lon + ", size=" + f.getMean() + ", tov=" + tov + ", course=" + course + ", speed=" + speed + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Target [id=");
+        builder.append(id);
+        builder.append(", lat=");
+        builder.append(lat);
+        builder.append(", lon=");
+        builder.append(lon);
+        builder.append(", targetSize=");
+        builder.append(targetSize);
+        builder.append(", tov=");
+        builder.append(tov);
+        builder.append(", course=");
+        builder.append(course);
+        builder.append(", speed=");
+        builder.append(speed);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

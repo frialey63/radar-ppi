@@ -8,12 +8,17 @@ import jakarta.ws.rs.core.MediaType;
 
 public class RestClient {
 
-    private static final String REST_URI = "http://localhost:8080/dump1090processor/aircraft";
+    private static final String DUMP1090_URI = "http://localhost:8080/dump1090processor/aircraft";
+
+    private static final String OPENSKY_URI = "http://localhost:8082/opensky/aircraft";
 
     private Client client = ClientBuilder.newClient();
 
     public Aircraft[] getAllAircraft() {
-        return client.target(REST_URI).path("all").request(MediaType.APPLICATION_JSON).get(Aircraft[].class);
+        return client.target(DUMP1090_URI).path("all").request(MediaType.APPLICATION_JSON).get(Aircraft[].class);
     }
 
+    public String getCategoryByIcao24(String icao24) {
+        return client.target(OPENSKY_URI).path(icao24).path("category").request(MediaType.APPLICATION_JSON).get(String.class);
+    }
 }
